@@ -96,12 +96,12 @@ jobs:
             ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('**/yarn.lock') }}
 
       # Install dependencies if cache miss
-      # - name: Install Dependencies
-      #   if: steps.cache-nodemodules-two.outputs.cache-hit != 'true'
-      #   shell: bash
-      #   run: |
-      #     echo "Cache miss! Installing dependencies"
-      #     npm install
+      - name: Install Dependencies
+        if: steps.cache-nodemodules-two.outputs.cache-hit != 'true'
+        shell: bash
+        run: |
+          echo "Cache miss! Installing dependencies"
+          npm install
 
       # Make fresh build if cache miss
       - name: Make Fresh Build
