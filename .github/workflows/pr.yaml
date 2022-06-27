@@ -3,27 +3,17 @@ name: Code checking
 on: pull_request
 
 jobs:
-  Cancel-Previous:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Cancel Previous Runs
-        uses: styfle/cancel-workflow-action@0.9.1
-        with:
-          access_token: ${{ github.token }}
-
   setup:
     runs-on: ubuntu-latest
 
     steps:
       - uses: actions/checkout@v2
-      - uses: actions/setup-node@v2
+      - uses: ./.github/actions/cache-restore
+        id: cache-node-modules
         with:
           node-version: 14
-      # - uses: actions/cache@v2
-      #   with:
-      #     path: node_modules
-      #     key: node-modules-${{ hashFiles('package-lock.json') }}
       - run: npm install
+        if: steps.cache-node-modules.outputs.cache-hit != 'true'
 
   lint:
     needs: setup
@@ -31,13 +21,10 @@ jobs:
 
     steps:
       - uses: actions/checkout@v2
-      - uses: actions/setup-node@v2
+      - uses: ./.github/actions/cache-restore
+        id: cache-node-modules
         with:
           node-version: 14
-      - uses: actions/cache@v2
-        with:
-          path: node_modules
-          key: node-modules-${{ hashFiles('package-lock.json') }}
       - run: npm run lint
 
   build:
@@ -46,13 +33,10 @@ jobs:
 
     steps:
       - uses: actions/checkout@v2
-      - uses: actions/setup-node@v2
+      - uses: ./.github/actions/cache-restore
+        id: cache-node-modules
         with:
           node-version: 14
-      - uses: actions/cache@v2
-        with:
-          path: node_modules
-          key: node-modules-${{ hashFiles('package-lock.json') }}
       - run: npm run build
 
   test:
@@ -61,11 +45,8 @@ jobs:
 
     steps:
       - uses: actions/checkout@v2
-      - uses: actions/setup-node@v2
+      - uses: ./.github/actions/cache-restore
+        id: cache-node-modules
         with:
           node-version: 14
-      - uses: actions/cache@v2
-        with:
-          path: node_modules
-          key: node-modules-${{ hashFiles('package-lock.json') }}
       - run: npm run test
