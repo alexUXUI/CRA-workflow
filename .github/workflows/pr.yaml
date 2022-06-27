@@ -15,6 +15,11 @@ jobs:
       - run: npm install
         if: steps.cache-node-modules.outputs.cache-hit != 'true'
 
+      - name: If no cache hit, install dependencies
+      id: node-install
+      if: steps.node-cache.outputs.cache-hit != 'true'
+      - run: echo "No cache hit"
+
   lint:
     needs: setup
     runs-on: ubuntu-latest
