@@ -1,0 +1,115 @@
+# Workflow name
+name: Pull Request Workflow
+
+# Events to trigger this workflow.
+on:
+  pull_request:
+    branches:
+      - main
+
+# GH Action ENVS
+env:
+  cache-name: cache-node-modules
+  cache-build: cache-build
+
+jobs:
+  # Saves execution time on the free tier. Non-blocking.
+  Cancel-Previous:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Cancel Previous Runs
+        uses: styfle/cancel-workflow-action@0.9.1
+        with:
+          access_token: ${{ github.token }}
+
+  # Loads the node modeules from cache or downloads them
+  Install:
+    runs-on: ubuntu-latest
+    steps:
+      # Download code from github
+      - uses: actions/checkout@v3
+
+      # Create Centralized cache for node_modules and build
+      - name: Create Central Cache
+        shell: bash
+        run: |
+          echo "Creating Central Cache"
+          mkdir central_cache
+
+      # Load node modules from cache
+      - name: Prepare Node Modules
+        id: cache-nodemodules
+        uses: actions/cache@v2
+        with:
+          path: |
+            central_cache/node_modules
+            central_cache/build
+          key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('**/yarn.lock') }}
+          # Cache key for node_modules
+          restore-keys: |
+            ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('**/yarn.lock') }}
+
+      # Install dependencies if cache miss
+      - name: Install Dependencies
+        if: steps.cache-nodemodules.outputs.cache-hit != 'true'
+        shell: bash
+        run: |
+          echo "Cache miss! Installing dependencies"
+          npm install
+          echo "Copying Dependencies Into Central Cache"
+          cp -r node_modules central_cache
+          ls central_cache/node_modules/
+
+  # Building
+  Build:
+    runs-on: ubuntu-latest
+    needs:
+      - install
+
+    steps:
+      # Download the code from github
+      - uses: actions/checkout@v3
+
+      # Load node modules from cache
+      - name: Prepare Node Modules
+        id: cache-nodemodules-two
+        uses: actions/cache@v2
+        with:
+          path: |
+            central_cache/node_modules
+            central_cache/build
+          key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('**/yarn.lock') }}
+          # Cache key for node_modules
+          restore-keys: |
+            ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('**/yarn.lock') }}
+
+      # Install dependencies if cache miss
+      - name: Install Dependencies
+        if: steps.cache-nodemodules-two.outputs.cache-hit != 'true'
+        shell: bash
+        run: |
+          echo "Cache miss! Installing dependencies"
+          npm install
+
+      # Load build from cache
+      - name: Read Build From Cache
+        id: cache-build
+        uses: actions/cache@v2
+        with:
+          path: |
+            central_cache/node_modules
+            central_cache/build
+          key: ${{ runner.os }}-build-${{ env.cache-build }}-${{ hashFiles('**/src/**') }}
+          restore-keys: |
+            ${{ runner.os }}-build-${{ env.cache-build }}-
+
+      # Make fresh build if cache miss
+      - name: Make Fresh Build
+        if: steps.cache-build.outputs.cache-hit != 'true'
+        shell: bash
+        run: |
+          echo "Cache miss! Building App"
+          npm run 
+          echo "Copying build Into Central Cache"
+          cp -r build central_cache
+          ls central_cache
