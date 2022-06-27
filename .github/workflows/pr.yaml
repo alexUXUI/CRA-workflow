@@ -1,6 +1,4 @@
-# perfect
-
-name: Code checking
+name: PR Workflow CI
 
 on: pull_request
 
