@@ -16,11 +16,6 @@ jobs:
           node-version: 14
       - run: npm install
 
-      - name: Install
-        if: steps.node-cache.outputs.cache-hit != 'true'
-        shell: bash
-      - run: echo "No cache hit"
-
   lint:
     needs: setup
     runs-on: ubuntu-latest
