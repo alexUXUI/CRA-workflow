@@ -32,6 +32,6 @@ runs:
         # criteria is required to distinguish the caches
         key: node-modules-${{ inputs.node-version }}-${{ hashFiles('package-lock.json') }}
 
-    - name: Echo
-      shell: bash
-      run: echo "Build cache hit: ${{ steps.node-cache.outputs.cache-hit }}"
+    # - name: Echo
+    #   shell: bash
+    #   run: echo "Build cache hit: ${{ steps.node-cache.outputs.cache-hit }}"

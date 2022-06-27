@@ -13,7 +13,11 @@ jobs:
         with:
           node-version: 14
       - run: npm install
-        if: steps.cache-node-modules.outputs.cache-hit != 'true'
+      
+    - name: Echo
+      shell: bash
+      run: echo "Build cache hit: ${{ steps.node-cache.outputs.cache-hit }}"
+
 
   lint:
     needs: setup
