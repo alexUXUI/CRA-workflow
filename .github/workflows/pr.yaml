@@ -13,9 +13,9 @@ jobs:
         with:
           node-version: 14
       - run: npm install
-        if: steps.cache-node-modules.outputs.cache-hit != 'true'
 
       - name: rando echo
+        if: steps.cache-node-modules.outputs.cache-hit != 'true'
         shell: bash
         run: echo "rando echo"
 
@@ -38,7 +38,7 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - uses: ./.github/actions/cache-restore
-      - uses: ./.github/actions/cache-restore
+      - uses: ./.github/actions/build-restore
         id: cache-node-modules
         with:
           node-version: 14
