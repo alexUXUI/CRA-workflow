@@ -1,28 +1,64 @@
-# .github/actions/cache-restore/action.yaml
+# perfect
 
-name: "Build Cache restoration"
-description: "Setup a NodeJS environment and restore build cache if any, given a node version"
+name: Code checking
 
-outputs:
-  cache-hit:
-    description: "Did we restore the build from the cache?"
-    value: ${{ steps.build-cache.outputs.cache-hit }}
+on: pull_request
 
-runs:
-  using: "composite" # Mandatory parameter
-  steps:
-    # Setup a Node environment given a node version
-    - name: Use Node.js ${{ inputs.node-version }}
-      uses: actions/setup-node@v2
-      with:
-        node-version: 14
+jobs:
+  setup:
+    runs-on: ubuntu-latest
 
-    - name: Cache Build
-      id: build-cache
-      uses: actions/cache@v2
-      with:
-        path: build
-        # Make the cache dependencies depending on the node version for matrix
-        # testing: the package-lock.json would be the same so an additional
-        # criteria is required to distinguish the caches
-        key: build-${{ inputs.node-version }}-${{ hashFiles('**/src/**') }}
+    steps:
+      - uses: actions/checkout@v2
+      - uses: ./.github/actions/deps-restore
+        id: cache-node-modules
+        with:
+          node-version: 14
+
+      - name: Download dependencies
+        if: steps.cache-node-modules.outputs.cache-hit != 'true'
+        shell: bash
+        run: |
+          echo "Downloading dependencies"
+          npm install
+  lint:
+    needs: setup
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+      - uses: ./.github/actions/deps-restore
+        id: cache-node-modules
+        with:
+          node-version: 14
+      - run: npm run lint
+
+  build:
+    needs: setup
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+      - uses: ./.github/actions/deps-restore
+      - uses: ./.github/actions/build-restore
+        id: cache-build
+        with:
+          node-version: 14
+
+      - name: Create new build
+        if: steps.cache-build.outputs.cache-hit != 'true'
+        shell: bash
+        run: |
+          echo "Creating new build"
+          npm run build
+  test:
+    needs: setup
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+      - uses: ./.github/actions/deps-restore
+        id: cache-node-modules
+        with:
+          node-version: 14
+      - run: npm run test
