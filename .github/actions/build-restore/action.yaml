@@ -24,4 +24,4 @@ runs:
       uses: actions/cache@v2
       with:
         path: build
-        key: build-${{ hashFiles('**/src/**') }}
+        key: build-${{ hashFiles('**/package.json', '**/src/**') }}
