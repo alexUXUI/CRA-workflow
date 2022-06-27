@@ -8,8 +8,11 @@ jobs:
   Intall_Deps_Setup_Node:
     runs-on: ubuntu-latest
 
+    strategy:
+      matrix:
+        node-version: [12, 14, 15]
+
     steps:
-      - name: Checkout source and read from cache
       - uses: actions/checkout@v2
       - uses: ./.github/actions/deps-restore
         id: cache-node-modules
@@ -45,7 +48,7 @@ jobs:
       - uses: ./.github/actions/build-restore
         id: cache-build
         with:
-          node-version: 14
+          node-version: ${{ matrix.node-version }}
 
       - name: Create new build
         if: steps.cache-build.outputs.cache-hit != 'true'
