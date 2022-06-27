@@ -1,15 +1,14 @@
-name: "Cache restoration"
-description: "Setup a NodeJS environment and restore node_modules cache, given a node version"
+name: "Node Module Cache"
+description: "Caches node_modules between workflow jobs"
 
 outputs:
   cache-hit:
-    description: "Did restore node_modules from cache?"
+    description: "Whether the cache was hit"
     value: ${{ steps.node-cache.outputs.cache-hit }}
 
 runs:
-  using: "composite" # Mandatory parameter
+  using: "composite"
   steps:
-    # Setup a Node environment given a node version
     - name: Use Node.js 14
       uses: actions/setup-node@v2
       with:
@@ -20,4 +19,4 @@ runs:
       uses: actions/cache@v2
       with:
         path: node_modules
-        key: node-modules-${{ hashFiles('**/package.json') }}
+        key: node-modules-${{ hashFiles('**/yarn.lock', '**/package.json') }}
