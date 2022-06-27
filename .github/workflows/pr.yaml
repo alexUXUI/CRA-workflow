@@ -9,10 +9,8 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout Source
+      - name: Checkout source and read from cache
       - uses: actions/checkout@v2
-
-      - name: Read from cache
       - uses: ./.github/actions/deps-restore
         id: cache-node-modules
         with:
