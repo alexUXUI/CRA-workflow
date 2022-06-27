@@ -3,25 +3,27 @@ name: Code checking
 on: pull_request
 
 jobs:
+  Cancel-Previous:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Cancel Previous Runs
+        uses: styfle/cancel-workflow-action@0.9.1
+        with:
+          access_token: ${{ github.token }}
+
   setup:
     runs-on: ubuntu-latest
 
     steps:
       - uses: actions/checkout@v2
-      - name: set up deps
-        id: cache-nodemodules
       - uses: actions/setup-node@v2
         with:
           node-version: 14
-      - uses: actions/cache@v2
-        with:
-          path: node_modules
-          key: node-modules-${{ hashFiles('package-lock.json') }}
-
-      # Install dependencies only if there were not found in the cache
-      - name: Install dependencies
-        if: steps.cache-node-modules.outputs.cache-hit != 'true'
-        run: npm install
+      # - uses: actions/cache@v2
+      #   with:
+      #     path: node_modules
+      #     key: node-modules-${{ hashFiles('package-lock.json') }}
+      - run: npm install
 
   lint:
     needs: setup
