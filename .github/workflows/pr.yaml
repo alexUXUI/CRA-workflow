@@ -109,7 +109,7 @@ jobs:
         shell: bash
         run: |
           echo "Cache miss! Building App"
-          npm run 
+          npm run build
           echo "Copying build Into Central Cache"
           cp -r build central_cache
           ls central_cache
