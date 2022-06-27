@@ -1,3 +1,5 @@
+# perfect
+
 name: Code checking
 
 on: pull_request
