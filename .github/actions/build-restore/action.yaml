@@ -10,7 +10,7 @@ inputs:
     default: lts/fermium
 outputs:
   cache-hit:
-    description: "Forward actions/cache cache-hit output"
+    description: "Did we restore the build from the cache?"
     value: ${{ steps.build-cache.outputs.cache-hit }}
 
 runs:
