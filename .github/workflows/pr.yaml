@@ -5,11 +5,14 @@ name: Code checking
 on: pull_request
 
 jobs:
-  setup:
+  Intall_Deps_Setup_Node:
     runs-on: ubuntu-latest
 
     steps:
+      - name: Checkout Source
       - uses: actions/checkout@v2
+
+      - name: Read from cache
       - uses: ./.github/actions/deps-restore
         id: cache-node-modules
         with:
@@ -22,7 +25,7 @@ jobs:
           echo "Downloading dependencies"
           npm install
 
-  lint:
+  Lint:
     needs: setup
     runs-on: ubuntu-latest
 
@@ -34,7 +37,7 @@ jobs:
           node-version: 14
       - run: npm run lint
 
-  build:
+  Build:
     needs: setup
     runs-on: ubuntu-latest
 
@@ -53,7 +56,7 @@ jobs:
           echo "Creating new build"
           npm run build
 
-  test:
+  Test:
     needs: setup
     runs-on: ubuntu-latest
 
