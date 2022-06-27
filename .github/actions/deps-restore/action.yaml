@@ -1,10 +1,6 @@
 name: "Cache restoration"
 description: "Setup a NodeJS environment and restore node_modules cache, given a node version"
 
-inputs:
-  node-version:
-    description: "Node version to use, default to LTS Fermium (14.x)"
-    default: lts/fermium
 outputs:
   cache-hit:
     description: "Did restore node_modules from cache?"
