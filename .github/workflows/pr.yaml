@@ -70,6 +70,18 @@ jobs:
       # Download the code from github
       - uses: actions/checkout@v3
 
+      # Load build from cache
+      - name: Read Build From Cache
+        id: cache-build
+        uses: actions/cache@v2
+        with:
+          path: |
+            central_cache/node_modules
+            central_cache/build
+          key: ${{ runner.os }}-build-${{ env.cache-build }}-${{ hashFiles('**/src/**') }}
+          restore-keys: |
+            ${{ runner.os }}-build-${{ env.cache-build }}-
+
       # Load node modules from cache
       - name: Prepare Node Modules
         id: cache-nodemodules-two
@@ -90,18 +102,6 @@ jobs:
         run: |
           echo "Cache miss! Installing dependencies"
           npm install
-
-      # Load build from cache
-      - name: Read Build From Cache
-        id: cache-build
-        uses: actions/cache@v2
-        with:
-          path: |
-            central_cache/node_modules
-            central_cache/build
-          key: ${{ runner.os }}-build-${{ env.cache-build }}-${{ hashFiles('**/src/**') }}
-          restore-keys: |
-            ${{ runner.os }}-build-${{ env.cache-build }}-
 
       # Make fresh build if cache miss
       - name: Make Fresh Build
