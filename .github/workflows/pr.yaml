@@ -61,3 +61,5 @@ jobs:
           path: node_modules
           key: node-modules-${{ hashFiles('package-lock.json') }}
       - run: npm run test
+        # Install dependencies only if there were not found in the cache
+        if: steps.cache-node-modules.outputs.cache-hit != 'true'
