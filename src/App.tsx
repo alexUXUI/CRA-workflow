@@ -1,6 +1,10 @@
 import React from "react";
 import "./App.css";
 
+import Cookies from "js-cookie";
+
+Cookies.set("foo", "bar");
+
 function App() {
   return (
     <div className="App">
