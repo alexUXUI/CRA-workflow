@@ -40,12 +40,12 @@ jobs:
       - uses: actions/checkout@v2
       - uses: ./.github/actions/deps-restore
       - uses: ./.github/actions/build-restore
-        id: cache-node-modules
+        id: cache-build
         with:
           node-version: 14
 
       - name: Create new build
-        if: steps.build-cache.outputs.cache-hit != 'true'
+        if: steps.cache-build.outputs.cache-hit != 'true'
         shell: bash
         run: |
           echo "Creating new build"
