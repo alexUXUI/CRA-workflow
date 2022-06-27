@@ -42,24 +42,15 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - uses: ./.github/actions/deps-restore
-        id: cache-nm
-
       - uses: ./.github/actions/build-restore
         id: cache-build
 
-      - name: Create New Build from Source Change
+      - name: Create New Build
         if: steps.cache-build.outputs.cache-hit != 'true'
         shell: bash
         run: |
           echo "Creating new build"
           npm run build
-
-      - name: Create New Build from Deps Change
-        if: steps.cache-nm.outputs.cache-hit != 'true'
-        shell: bash
-        run: |
-          echo "Downloading dependencies"
-          npm install
 
   test:
     needs: setup
