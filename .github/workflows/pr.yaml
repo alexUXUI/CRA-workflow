@@ -8,6 +8,8 @@ jobs:
 
     steps:
       - uses: actions/checkout@v2
+      - name: set up deps
+        id: cache-nodemodules
       - uses: actions/setup-node@v2
         with:
           node-version: 14
@@ -19,7 +21,7 @@ jobs:
       # Install dependencies only if there were not found in the cache
       - name: Install dependencies
         if: steps.cache-node-modules.outputs.cache-hit != 'true'
-      - run: npm install
+        run: npm install
 
   lint:
     needs: setup
