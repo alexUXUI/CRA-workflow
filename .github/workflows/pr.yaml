@@ -26,6 +26,7 @@ jobs:
         run: |
           echo "Downloading dependencies"
           npm install
+
   lint:
     needs: setup
     runs-on: ubuntu-latest
@@ -52,6 +53,7 @@ jobs:
         run: |
           echo "Creating new build"
           npm run build
+
   test:
     needs: setup
     runs-on: ubuntu-latest
