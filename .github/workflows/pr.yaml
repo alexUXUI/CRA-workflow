@@ -8,13 +8,12 @@ jobs:
 
     steps:
       - uses: actions/checkout@v2
-
-      - name: Cache Restore
       - uses: ./.github/actions/cache-restore
         id: cache-node-modules
         with:
           node-version: 14
       - run: npm install
+        if: steps.cache-node-modules.outputs.cache-hit != 'true'
 
   lint:
     needs: setup
