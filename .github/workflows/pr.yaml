@@ -43,7 +43,13 @@ jobs:
         id: cache-node-modules
         with:
           node-version: 14
-      - run: npm run build
+
+      - name: Create new build
+        if: steps.build-cache.outputs.cache-hit != 'true'
+        shell: bash
+        run: |
+          echo "Creating new build"
+          npm run build
 
   test:
     needs: setup
