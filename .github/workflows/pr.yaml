@@ -5,12 +5,8 @@ name: Code checking
 on: pull_request
 
 jobs:
-  Intall_Deps_Setup_Node:
+  setup:
     runs-on: ubuntu-latest
-
-    strategy:
-      matrix:
-        node-version: [12, 14, 15]
 
     steps:
       - uses: actions/checkout@v2
@@ -25,8 +21,7 @@ jobs:
         run: |
           echo "Downloading dependencies"
           npm install
-
-  Lint:
+  lint:
     needs: setup
     runs-on: ubuntu-latest
 
@@ -38,7 +33,7 @@ jobs:
           node-version: 14
       - run: npm run lint
 
-  Build:
+  build:
     needs: setup
     runs-on: ubuntu-latest
 
@@ -48,7 +43,7 @@ jobs:
       - uses: ./.github/actions/build-restore
         id: cache-build
         with:
-          node-version: ${{ matrix.node-version }}
+          node-version: 14
 
       - name: Create new build
         if: steps.cache-build.outputs.cache-hit != 'true'
@@ -56,8 +51,7 @@ jobs:
         run: |
           echo "Creating new build"
           npm run build
-
-  Test:
+  test:
     needs: setup
     runs-on: ubuntu-latest
 
