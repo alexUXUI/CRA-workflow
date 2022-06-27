@@ -13,11 +13,11 @@ jobs:
         with:
           node-version: 14
       - run: npm install
-      
-    - name: Echo
-      shell: bash
-      run: echo "Build cache hit: ${{ steps.node-cache.outputs.cache-hit }}"
+        if: steps.cache-node-modules.outputs.cache-hit != 'true'
 
+      - name: rando echo
+        shell: bash
+        run: echo "rando echo"
 
   lint:
     needs: setup
@@ -37,6 +37,7 @@ jobs:
 
     steps:
       - uses: actions/checkout@v2
+      - uses: ./.github/actions/cache-restore
       - uses: ./.github/actions/cache-restore
         id: cache-node-modules
         with:
