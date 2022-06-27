@@ -1,115 +1,63 @@
-# Workflow name
-name: Pull Request Workflow
+name: Code checking
 
-# Events to trigger this workflow.
-on:
-  pull_request:
-    branches:
-      - main
-
-# GH Action ENVS
-env:
-  cache-name: cache-node-modules
-  cache-build: cache-build
+on: pull_request
 
 jobs:
-  # Saves execution time on the free tier. Non-blocking.
-  Cancel-Previous:
+  setup:
     runs-on: ubuntu-latest
-    steps:
-      - name: Cancel Previous Runs
-        uses: styfle/cancel-workflow-action@0.9.1
-        with:
-          access_token: ${{ github.token }}
-
-  # Loads the node modeules from cache or downloads them
-  Install:
-    runs-on: ubuntu-latest
-    steps:
-      # Download code from github
-      - uses: actions/checkout@v3
-
-      # Create Centralized cache for node_modules and build
-      - name: Create Central Cache
-        shell: bash
-        run: |
-          echo "Creating Central Cache"
-          mkdir central_cache
-
-      # Load node modules from cache
-      - name: Prepare Node Modules
-        id: cache-nodemodules
-        uses: actions/cache@v2
-        with:
-          path: |
-            central_cache/node_modules
-            central_cache/build
-          key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('**/yarn.lock') }}
-          restore-keys: |
-            ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('**/yarn.lock') }}
-            ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('**/src/**') }}
-
-      # Install dependencies if cache miss
-      - name: Install Dependencies
-        if: steps.cache-nodemodules.outputs.cache-hit != 'true'
-        shell: bash
-        run: |
-          echo "Cache miss! Installing dependencies"
-          npm install
-          echo "Copying Dependencies Into Central Cache"
-          cp -r node_modules central_cache
-          ls central_cache/node_modules/
-
-  # Building
-  Build:
-    runs-on: ubuntu-latest
-    needs:
-      - install
 
     steps:
-      # Download the code from github
-      - uses: actions/checkout@v3
-
-      # Load build from cache
-      # - name: Read Build From Cache
-      #   id: cache-build
-      #   uses: actions/cache@v2
-      #   with:
-      #     path: |
-      #       central_cache/node_modules
-      #       central_cache/build
-      #     key: ${{ runner.os }}-build-${{ env.cache-build }}-${{ hashFiles('**/src/**') }}
-      #     restore-keys: |
-      #       ${{ runner.os }}-build-${{ env.cache-build }}-
-
-      # Load node modules from cache
-      - name: Prepare Node Modules
-        id: cache-nodemodules-two
-        uses: actions/cache@v2
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v2
         with:
-          path: |
-            central_cache/node_modules
-            central_cache/build
-          key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('**/yarn.lock') }}
-          # Cache key for node_modules
-          restore-keys: |
-            ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('**/yarn.lock') }}
+          node-version: 14
+      - uses: actions/cache@v2
+        with:
+          path: node_modules
+          key: node-modules-${{ hashFiles('package-lock.json') }}
+      - run: npm install
 
-      # Install dependencies if cache miss
-      - name: Install Dependencies
-        if: steps.cache-nodemodules-two.outputs.cache-hit != 'true'
-        shell: bash
-        run: |
-          echo "Cache miss! Installing dependencies"
-          npm install
+  lint:
+    needs: setup
+    runs-on: ubuntu-latest
 
-      # Make fresh build if cache miss
-      - name: Make Fresh Build
-        if: steps.cache-build.outputs.cache-hit != 'true'
-        shell: bash
-        run: |
-          echo "Cache miss! Building App"
-          npm run build
-          echo "Copying build Into Central Cache"
-          cp -r build central_cache
-          ls central_cache
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v2
+        with:
+          node-version: 14
+      - uses: actions/cache@v2
+        with:
+          path: node_modules
+          key: node-modules-${{ hashFiles('package-lock.json') }}
+      - run: npm run lint
+
+  build:
+    needs: setup
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v2
+        with:
+          node-version: 14
+      - uses: actions/cache@v2
+        with:
+          path: node_modules
+          key: node-modules-${{ hashFiles('package-lock.json') }}
+      - run: npm run build
+
+  test:
+    needs: setup
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v2
+        with:
+          node-version: 14
+      - uses: actions/cache@v2
+        with:
+          path: node_modules
+          key: node-modules-${{ hashFiles('package-lock.json') }}
+      - run: npm run test
