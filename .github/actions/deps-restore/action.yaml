@@ -1,16 +1,11 @@
 # .github/actions/cache-restore/action.yaml
 
 name: "Cache restoration"
-description: "Setup a NodeJS environment and restore cache if any, given a node version"
+description: "Setup a NodeJS environment and restore node_modules cache, given a node version"
 
-inputs:
-  node-version:
-    description: "Node version to use, default to LTS Fermium (14.x)"
-    required: true
-    default: lts/fermium
 outputs:
   cache-hit:
-    description: "Forward actions/cache cache-hit output"
+    description: "Did restore node_modules from cache?"
     value: ${{ steps.node-cache.outputs.cache-hit }}
 
 runs:
@@ -20,7 +15,7 @@ runs:
     - name: Use Node.js ${{ inputs.node-version }}
       uses: actions/setup-node@v2
       with:
-        node-version: ${{ inputs.node-version }}
+        node-version: 14
 
     - name: Cache Node Modules
       id: node-cache
@@ -31,7 +26,3 @@ runs:
         # testing: the package-lock.json would be the same so an additional
         # criteria is required to distinguish the caches
         key: node-modules-${{ inputs.node-version }}-${{ hashFiles('package-lock.json') }}
-
-    # - name: Echo
-    #   shell: bash
-    #   run: echo "Build cache hit: ${{ steps.node-cache.outputs.cache-hit }}"

@@ -1,64 +1,62 @@
-# perfect
-
-name: Code checking
+name: PR CI Workflow
 
 on: pull_request
 
 jobs:
-  setup:
+  Cancel-Previous:
     runs-on: ubuntu-latest
+    steps:
+      - name: Cancel Previous Runs
+        uses: styfle/cancel-workflow-action@0.9.1
+        with:
+          access_token: ${{ github.token }}
 
+  Install:
+    runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
       - uses: ./.github/actions/deps-restore
         id: cache-node-modules
-        with:
-          node-version: 14
 
       - name: Download dependencies
         if: steps.cache-node-modules.outputs.cache-hit != 'true'
         shell: bash
         run: |
-          echo "Downloading dependencies"
+          echo "Downloading dependencies... 📦"
           npm install
-  lint:
+
+  Lint:
     needs: setup
     runs-on: ubuntu-latest
-
     steps:
       - uses: actions/checkout@v2
       - uses: ./.github/actions/deps-restore
         id: cache-node-modules
-        with:
-          node-version: 14
+
       - run: npm run lint
 
-  build:
+  Build:
     needs: setup
     runs-on: ubuntu-latest
-
     steps:
       - uses: actions/checkout@v2
       - uses: ./.github/actions/deps-restore
       - uses: ./.github/actions/build-restore
         id: cache-build
-        with:
-          node-version: 14
 
       - name: Create new build
         if: steps.cache-build.outputs.cache-hit != 'true'
         shell: bash
         run: |
-          echo "Creating new build"
+          echo "Creating new build... 🔨"
           npm run build
-  test:
+
+  Test:
     needs: setup
     runs-on: ubuntu-latest
-
     steps:
       - uses: actions/checkout@v2
       - uses: ./.github/actions/deps-restore
         id: cache-node-modules
-        with:
-          node-version: 14
+
       - run: npm run test

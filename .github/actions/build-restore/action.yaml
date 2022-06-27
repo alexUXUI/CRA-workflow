@@ -3,11 +3,6 @@
 name: "Build Cache restoration"
 description: "Setup a NodeJS environment and restore build cache if any, given a node version"
 
-inputs:
-  node-version:
-    description: "Node version to use, default to LTS Fermium (14.x)"
-    required: true
-    default: lts/fermium
 outputs:
   cache-hit:
     description: "Did we restore the build from the cache?"
@@ -20,7 +15,7 @@ runs:
     - name: Use Node.js ${{ inputs.node-version }}
       uses: actions/setup-node@v2
       with:
-        node-version: ${{ inputs.node-version }}
+        node-version: 14
 
     - name: Cache Build
       id: build-cache
