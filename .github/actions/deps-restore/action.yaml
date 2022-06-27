@@ -3,6 +3,11 @@
 name: "Cache restoration"
 description: "Setup a NodeJS environment and restore node_modules cache, given a node version"
 
+inputs:
+  node-version:
+    description: "Node version to use, default to LTS Fermium (14.x)"
+    required: true
+    default: lts/fermium
 outputs:
   cache-hit:
     description: "Did restore node_modules from cache?"
@@ -12,7 +17,7 @@ runs:
   using: "composite" # Mandatory parameter
   steps:
     # Setup a Node environment given a node version
-    - name: Use Node.js ${{ inputs.node-version }}
+    - name: Use Node.js 14
       uses: actions/setup-node@v2
       with:
         node-version: 14
