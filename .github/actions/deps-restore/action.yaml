@@ -26,7 +26,4 @@ runs:
       uses: actions/cache@v2
       with:
         path: node_modules
-        # Make the cache dependencies depending on the node version for matrix
-        # testing: the package-lock.json would be the same so an additional
-        # criteria is required to distinguish the caches
         key: node-modules-${{ hashFiles('package-lock.json') }}

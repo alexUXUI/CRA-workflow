@@ -16,7 +16,6 @@ outputs:
 runs:
   using: "composite" # Mandatory parameter
   steps:
-    # Setup a Node environment given a node version
     - name: Use Node.js 14
       uses: actions/setup-node@v2
       with:
@@ -27,7 +26,4 @@ runs:
       uses: actions/cache@v2
       with:
         path: build
-        # Make the cache dependencies depending on the node version for matrix
-        # testing: the package-lock.json would be the same so an additional
-        # criteria is required to distinguish the caches
         key: build-${{ hashFiles('**/src/**') }}
