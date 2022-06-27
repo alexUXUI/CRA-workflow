@@ -47,14 +47,14 @@ jobs:
       - uses: ./.github/actions/build-restore
         id: cache-build
 
-      - name: Create new build
+      - name: Create New Build from Source Change
         if: steps.cache-build.outputs.cache-hit != 'true'
         shell: bash
         run: |
           echo "Creating new build"
           npm run build
 
-      - name: Create new build
+      - name: Create New Build from Deps Change
         if: steps.cache-nm.outputs.cache-hit != 'true'
         shell: bash
         run: |
