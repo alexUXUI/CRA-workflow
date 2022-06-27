@@ -31,3 +31,8 @@ runs:
         # testing: the package-lock.json would be the same so an additional
         # criteria is required to distinguish the caches
         key: node-modules-${{ inputs.node-version }}-${{ hashFiles('package-lock.json') }}
+
+    - name: If no cache hit, install dependencies
+      id: node-install
+      if: steps.node-cache.outputs.cache-hit != 'true'
+    - run: echo "No cache hit"
