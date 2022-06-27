@@ -5,14 +5,14 @@ name: Code checking
 on: pull_request
 
 jobs:
-  cancel:
+  cancelprevious:
     runs-on: ubuntu-latest
     steps:
       - uses: styfle/cancel-workflow-action@0.9.1
         with:
           access_token: ${{ github.token }}
 
-  install:
+  setup:
     runs-on: ubuntu-latest
 
     steps:
