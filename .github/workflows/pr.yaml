@@ -8,16 +8,17 @@ jobs:
 
     steps:
       - uses: actions/checkout@v2
+
+      - name: Cache Restore
       - uses: ./.github/actions/cache-restore
         id: cache-node-modules
         with:
           node-version: 14
       - run: npm install
-        if: steps.cache-node-modules.outputs.cache-hit != 'true'
 
-      - name: If no cache hit, install dependencies
-        id: node-install
+      - name: Install
         if: steps.node-cache.outputs.cache-hit != 'true'
+        shell: bash
       - run: echo "No cache hit"
 
   lint:
