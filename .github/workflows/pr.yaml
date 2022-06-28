@@ -61,6 +61,7 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - uses: ./.github/actions/build-restore
+      - run: ls
       - uses: actions/upload-artifact@v3
         with:
           name: ${{ env.GITHUB_REPOSITORY }}-${{ env.GITHUB_REF }}-${{ env.GITHUB_SHA }}
