@@ -1,13 +1,13 @@
-name: "Build Cache restoration"
-description: "Setup a NodeJS environment and restore build cache if any, given a node version"
+name: "Build Cache"
+description: "Build Cache"
 
 outputs:
   cache-hit:
-    description: "Did we restore the build from the cache?"
+    description: "Whether the cache was hit or not"
     value: ${{ steps.build-cache.outputs.cache-hit }}
 
 runs:
-  using: "composite" # Mandatory parameter
+  using: "composite"
   steps:
     - name: Use Node.js 14
       uses: actions/setup-node@v2
@@ -19,4 +19,4 @@ runs:
       uses: actions/cache@v2
       with:
         path: build
-        key: build-${{ hashFiles('**/package.json', '**/src/**') }}
+        key: build-${{ hashFiles(''**/yarn.lock', '**/package.json', '**/src/**') }}
