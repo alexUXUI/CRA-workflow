@@ -33,7 +33,7 @@ jobs:
       - uses: actions/checkout@v2
       - uses: ./.github/actions/deps-restore
         id: cache-node-modules
-      - run: npm run lint
+      - run: yarn lint
 
   Build:
     needs: Install
@@ -50,7 +50,7 @@ jobs:
         shell: bash
         run: |
           echo "Creating new build"
-          npm run build
+          yarn build
 
   Test:
     needs: Install
@@ -60,4 +60,4 @@ jobs:
       - uses: actions/checkout@v2
       - uses: ./.github/actions/deps-restore
         id: cache-node-modules
-      - run: npm run test
+      - run: yarn test
