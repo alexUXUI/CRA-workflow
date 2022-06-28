@@ -20,10 +20,7 @@ jobs:
 
       - name: Download dependencies
         if: steps.cache-node-modules.outputs.cache-hit != 'true'
-        shell: bash
-        run: |
-          echo "Downloading dependencies"
-          yarn install --immutable
+        run: yarn install --immutable
 
   Lint:
     needs: Install
@@ -55,7 +52,4 @@ jobs:
 
       - name: Create New Build
         if: steps.cache-build.outputs.cache-hit != 'true'
-        shell: bash
-        run: |
-          echo "Creating new build"
-          yarn build
+        run: yarn build
