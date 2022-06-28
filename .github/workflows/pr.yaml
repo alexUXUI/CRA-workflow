@@ -32,7 +32,6 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - uses: ./.github/actions/deps-restore
-        id: cache-node-modules
       - run: yarn lint
 
   Build:
