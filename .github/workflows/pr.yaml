@@ -3,14 +3,14 @@ name: PR Workflow CI
 on: pull_request
 
 jobs:
-  cancelprevious:
+  Cancel-Previous:
     runs-on: ubuntu-latest
     steps:
       - uses: styfle/cancel-workflow-action@0.9.1
         with:
           access_token: ${{ github.token }}
 
-  setup:
+  Install:
     runs-on: ubuntu-latest
 
     steps:
@@ -20,23 +20,28 @@ jobs:
 
       - name: Download dependencies
         if: steps.cache-node-modules.outputs.cache-hit != 'true'
-        shell: bash
-        run: |
-          echo "Downloading dependencies"
-          npm install
+        run: yarn install --immutable
 
-  lint:
-    needs: setup
+  Lint:
+    needs: Install
     runs-on: ubuntu-latest
 
     steps:
       - uses: actions/checkout@v2
       - uses: ./.github/actions/deps-restore
-        id: cache-node-modules
-      - run: npm run lint
+      - run: yarn lint
 
-  build:
-    needs: setup
+  Test:
+    needs: Install
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+      - uses: ./.github/actions/deps-restore
+      - run: yarn test
+
+  Build:
+    needs: Install
     runs-on: ubuntu-latest
 
     steps:
@@ -47,17 +52,4 @@ jobs:
 
       - name: Create New Build
         if: steps.cache-build.outputs.cache-hit != 'true'
-        shell: bash
-        run: |
-          echo "Creating new build"
-          npm run build
-
-  test:
-    needs: setup
-    runs-on: ubuntu-latest
-
-    steps:
-      - uses: actions/checkout@v2
-      - uses: ./.github/actions/deps-restore
-        id: cache-node-modules
-      - run: npm run test
+        run: yarn build

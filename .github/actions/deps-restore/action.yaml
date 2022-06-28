@@ -20,4 +20,4 @@ runs:
       uses: actions/cache@v2
       with:
         path: node_modules
-        key: node-modules-${{ hashFiles('**/package.json') }}
+        key: node-modules-${{ hashFiles('**/yarn.lock') }}
