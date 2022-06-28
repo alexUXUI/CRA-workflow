@@ -23,7 +23,7 @@ jobs:
         shell: bash
         run: |
           echo "Downloading dependencies"
-          npm install
+          yarn install --immutable
 
   Lint:
     needs: Install
@@ -33,6 +33,15 @@ jobs:
       - uses: actions/checkout@v2
       - uses: ./.github/actions/deps-restore
       - run: yarn lint
+
+  Test:
+    needs: Install
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+      - uses: ./.github/actions/deps-restore
+      - run: yarn test
 
   Build:
     needs: Install
@@ -50,13 +59,3 @@ jobs:
         run: |
           echo "Creating new build"
           yarn build
-
-  Test:
-    needs: Install
-    runs-on: ubuntu-latest
-
-    steps:
-      - uses: actions/checkout@v2
-      - uses: ./.github/actions/deps-restore
-        id: cache-node-modules
-      - run: yarn test
